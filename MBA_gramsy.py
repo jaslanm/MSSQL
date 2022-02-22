@@ -26,6 +26,7 @@ data = pd.read_csv('paragony.csv', encoding="UTF-8", sep=";").drop(columns=['Dat
 #
 #print(data)
 basket_plus = data.groupby(['ParagonNO','Symbol'])['lp'].sum().unstack().reset_index().fillna(0).set_index('ParagonNO')
+
 #print(type(basket_plus))
 #
 
@@ -39,9 +40,9 @@ def encode_units(x):
     
 basket_encode_plus = basket_plus.applymap(encode_units)
 #basket_encode_plus
+basket_filter_plus = basket_encode_plus[(basket_encode_plus > 0).sum(axis=1) >= 2]
 
-
-frequent_itemsets_plus = apriori(basket_encode_plus, min_support=0.0025, 
+frequent_itemsets_plus = apriori(basket_filter_plus, min_support=0.003, 
                                   use_colnames=True).sort_values('support', ascending=False).reset_index(drop=True)
 #
 
